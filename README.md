@@ -4,9 +4,9 @@
 
 Pour le **Projet 9 – Développez une preuve de concept**, nous avons choisi de poursuivre et d’améliorer un travail amorcé lors du **Projet 7 – Réalisez une analyse de sentiments grâce au Deep Learning**. Ce dernier avait abouti à la mise en place d’un pipeline complet d’analyse de sentiment de tweets, utilisant notamment un modèle **DistilBERT** fine-tuné sur le jeu de données **Sentiment140**.  
 
-L’objectif du Projet 9 est de **dépasser les performances obtenues précédemment** en explorant de nouvelles approches plus performantes et adaptées au contexte, avec un accent particulier sur le **fine-tuning de ModernBERT**. Cette démarche s’appuiera sur des comparaisons avec des modèles spécialisés RoBERTa et des LLMs généralistes en mode zero-shot, afin de valider la pertinence et la supériorité de la solution proposée.
+## ✨ Objectif
 
----
+L’objectif du Projet 9 est de **dépasser les performances obtenues précédemment** en explorant de nouvelles approches plus performantes et adaptées au contexte, avec un accent particulier sur le **fine-tuning de ModernBERT**. Cette démarche s’appuiera sur des comparaisons avec des modèles spécialisés RoBERTa et des LLMs généralistes en mode zero-shot, afin de valider la pertinence et la supériorité de la solution proposée.
 
 ## 📊 Jeu de données : Sentiment140
 
@@ -14,10 +14,9 @@ L’objectif du Projet 9 est de **dépasser les performances obtenues précédem
 Ses caractéristiques principales :  
 - **Format** : CSV avec colonnes `target`, `ids`, `date`, `flag`, `user`, `text`  
 - **Langue** : Anglais  
-- **Particularité** : Capture les spécificités du langage Twitter (hashtags, mentions, abréviations, emojis).  
-Ce dataset est largement utilisé comme référence pour l’entraînement et l’évaluation de modèles d’analyse de sentiment.
+- **Particularité** : Capture les spécificités du langage Twitter (hashtags, mentions, abréviations, emojis).
 
----
+Ce dataset est largement utilisé comme référence pour l’entraînement et l’évaluation de modèles d’analyse de sentiment.
 
 ## 🎯 Tâche : Classification binaire
 
@@ -37,7 +36,7 @@ Ces résultats constituent notre **baseline** pour évaluer les approches du Pro
 
 ---
 
-## 🧠 Approches envisagées
+## 🧠 Approches
 
 ### 🔹 Classification zero-shot
 
@@ -122,13 +121,6 @@ Dans le cadre de notre projet, nous procédons à un **fine-tuning** sur le jeu 
 - **Langages** : Python  
 - **Librairies ML/DL** : PyTorch, Transformers, Scikit-learn  
 - **MLOps** : MLFlow, GitHub Actions  
-- **Backend/API** : FastAPI  
+- **Backend/API** : Streamlit  
 - **LLM API** : Claude AI  
-- **Monitoring** : Azure Application Insight
-
----
-
-## ✨ Objectif final
-
-Notre objectif est de **valider expérimentalement que ModernBERT, après fine-tuning sur Sentiment140, surpasse les modèles zero-shot spécialisés et les LLMs généralistes** sur la classification binaire de sentiment de tweets.
 
