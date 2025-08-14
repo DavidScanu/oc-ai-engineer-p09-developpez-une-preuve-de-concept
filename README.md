@@ -51,9 +51,9 @@ Ces modèles sont optimisés pour l’analyse de sentiment et pré-entraînés s
 
 #### LLM Claude AI
 
-L’utilisation d’un **LLM** comme **Claude AI** pour la classification zero-shot consiste à exploiter ses capacités de compréhension via des *prompts* décrivant la tâche et les catégories.  
+L’utilisation d’un **LLM** comme **Claude AI** pour la classification zero-shot consiste à exploiter ses capacités de compréhension via des *prompts* décrivant la tâche d'analse de sentimet et les classes que nous cherchons à prédire (positive/negative).  
 
-Nous prévoyons de tester :
+Nous avons testé deux modèles Anthropic :
 - `claude-3-haiku-20240307` (version rapide et économique)
 - `claude-3-5-haiku-20241022` (avec batch processing)
 
@@ -71,9 +71,7 @@ En pratique, **ModernBERT** traite des batchs plus grands que ses concurrents (j
 
 Dans le cadre de notre projet, nous procédons à un **fine-tuning** sur le jeu de données **Sentiment140** afin d’adapter le modèle à la classification binaire de sentiments sur tweets. L’objectif est de dépasser les performances obtenues lors du Projet 7 avec DistilBERT, en tirant parti du pré-entraînement massif et des optimisations structurelles de ModernBERT pour obtenir des métriques supérieures tout en maintenant une excellente efficacité opérationnelle.
 
----
-
-### 📈 Tableau comparatif prévisionnel des modèles
+### 📈 Tableau comparatif des modèles
 
 | Modèle                                          | Type          | Stratégie          | Points forts                                                                 | Limites prévues                                             |
 |------------------------------------------------|--------------|--------------------|-------------------------------------------------------------------------------|--------------------------------------------------------------|
