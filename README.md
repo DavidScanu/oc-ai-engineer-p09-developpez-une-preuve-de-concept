@@ -129,4 +129,4 @@ Dans le cadre de notre projet, nous procédons à un **fine-tuning** sur le jeu 
 ## A propos 
 
 Projet développé par [David Scanu](https://www.linkedin.com/in/davidscanu14/) dans le cadre du parcours [AI Engineer](https://openclassrooms.com/fr/paths/795-ai-engineer) d'OpenClassrooms :  
-*Projet 7 - Réalisez une analyse de sentiments grâce au Deep Learning*.
+*Projet 9 : Développez une preuve de concept*.
