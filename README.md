@@ -1,5 +1,7 @@
 # 📝 Projet 9 – Développez une preuve de concept : Amélioration d’un modèle d’analyse de sentiment de tweets
 
+> 🎓 OpenClassrooms • Parcours [AI Engineer](https://openclassrooms.com/fr/paths/795-ai-engineer) | 👋 *Étudiant* : [David Scanu](https://www.linkedin.com/in/davidscanu14/)
+
 ## 📌 Introduction
 
 Pour le **Projet 9 – Développez une preuve de concept**, nous avons choisi de poursuivre et d’améliorer un travail amorcé lors du **Projet 7 – Réalisez une analyse de sentiments grâce au Deep Learning**. Ce dernier avait abouti à la mise en place d’un pipeline complet d’analyse de sentiment de tweets, utilisant notamment un modèle **DistilBERT** fine-tuné sur le jeu de données **Sentiment140**.  
@@ -122,3 +124,9 @@ Dans le cadre de notre projet, nous procédons à un **fine-tuning** sur le jeu 
 - **Backend/API** : Streamlit  
 - **LLM API** : Claude AI  
 
+---
+
+## A propos 
+
+Projet développé par [David Scanu](https://www.linkedin.com/in/davidscanu14/) dans le cadre du parcours [AI Engineer](https://openclassrooms.com/fr/paths/795-ai-engineer) d'OpenClassrooms :  
+*Projet 7 - Réalisez une analyse de sentiments grâce au Deep Learning*.
