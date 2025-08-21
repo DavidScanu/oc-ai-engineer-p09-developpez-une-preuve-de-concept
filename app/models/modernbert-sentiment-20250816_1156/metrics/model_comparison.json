@@ -1,0 +1,43 @@
+{
+  "baseline_results": {
+    "Model": "DistilBERT (Baseline)",
+    "Accuracy": 0.829,
+    "F1-score": 0.827,
+    "Precision": 0.838,
+    "Recall": 0.816,
+    "ROC AUC": 0.899
+  },
+  "modernbert_results": {
+    "Model": "ModernBERT (Fine-tuned)",
+    "Accuracy": 0.7721666666666667,
+    "F1-score": 0.7721664537688752,
+    "Precision": 0.7721676839689877,
+    "Recall": 0.7721666666666667,
+    "ROC AUC": 0.8391648622222222
+  },
+  "improvements_percent": {
+    "Accuracy": -6.855649376759143,
+    "F1-score": -6.630416714767207,
+    "Precision": -7.855884967901224,
+    "Recall": -5.371732026143785,
+    "ROC AUC": -6.655743912989746
+  },
+  "comparison_table": [
+    {
+      "Model": "DistilBERT (Baseline)",
+      "Accuracy": 0.829,
+      "F1-score": 0.827,
+      "Precision": 0.838,
+      "Recall": 0.816,
+      "ROC AUC": 0.899
+    },
+    {
+      "Model": "ModernBERT (Fine-tuned)",
+      "Accuracy": 0.7721666666666667,
+      "F1-score": 0.7721664537688752,
+      "Precision": 0.7721676839689877,
+      "Recall": 0.7721666666666667,
+      "ROC AUC": 0.8391648622222222
+    }
+  ]
+}

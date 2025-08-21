@@ -1,0 +1,10 @@
+{
+  "model_name": "answerdotai/ModernBERT-base",
+  "architecture": "ModernBERT-base",
+  "task": "binary_sentiment_classification",
+  "freeze_bert": true,
+  "total_params": 149606402,
+  "trainable_params": 1538,
+  "vocab_size": 50280,
+  "max_length": 512
+}

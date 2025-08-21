@@ -1,0 +1,6 @@
+{
+  "device": "cuda",
+  "pytorch_version": "2.6.0+cu124",
+  "cuda_available": true,
+  "gpu_name": "NVIDIA A100-SXM4-40GB"
+}

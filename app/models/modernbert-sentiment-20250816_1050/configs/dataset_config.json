@@ -1,0 +1,20 @@
+{
+  "total_samples": 100000,
+  "train_samples": 70000,
+  "val_samples": 15000,
+  "test_samples": 15000,
+  "positive_samples": 50000,
+  "negative_samples": 50000,
+  "class_balance": {
+    "positive_ratio": 0.5,
+    "negative_ratio": 0.5
+  },
+  "preprocessing": {
+    "max_sequence_length": 512,
+    "steps": [
+      "clean_tweet",
+      "balanced_sampling",
+      "stratified_split"
+    ]
+  }
+}

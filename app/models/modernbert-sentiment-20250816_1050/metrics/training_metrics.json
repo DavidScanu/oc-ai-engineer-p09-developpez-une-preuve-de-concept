@@ -1,0 +1,8 @@
+{
+  "training_time_minutes": 38.9227833032608,
+  "training_time_seconds": 2335.366998195648,
+  "total_steps": 26256,
+  "epochs_completed": 12.0,
+  "best_metric": 0.8004984622222222,
+  "best_model_checkpoint": "./results/checkpoint-26256"
+}
