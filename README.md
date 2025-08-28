@@ -116,6 +116,58 @@ Dans le cadre de notre projet, nous procédons à un **fine-tuning** sur le jeu 
 
 ---
 
+Voici la section à ajouter à votre README.md :
+
+---
+
+## 📊 Dashboard Streamlit
+
+### Fonctionnalités principales
+
+Le dashboard interactif permet de valider la preuve de concept à travers quatre composants :
+
+- **Analyse exploratoire** : Statistiques du dataset Sentiment140, WordClouds, distribution des sentiments
+- **Prédiction temps réel** : Interface de classification avec scores de confiance et historique  
+- **Métriques détaillées** : Comparaison automatisée des modèles, matrice de confusion, courbe ROC
+- **Gestion modulaire** : Détection automatique des modèles, sélection et comparaison avec baseline DistilBERT
+
+### Aperçu de l'interface
+
+```
+🎯 Dashboard d'Analyse de Sentiment
+├── 📊 Analyse Exploratoire
+│   ├── Distribution des sentiments (graphiques interactifs)
+│   ├── Statistiques textuelles (longueur, fréquence des mots)
+│   └── WordClouds différenciés par polarité
+├── 🤖 Prédiction en Temps Réel  
+│   ├── Saisie libre ou exemples prédéfinis
+│   ├── Classification instantanée avec confiance
+│   └── Historique des prédictions de session
+└── 📈 Métriques Détaillées
+    ├── Comparaison multi-modèles vs baseline
+    ├── Visualisations (confusion matrix, ROC, historique)
+    └── Résumé exécutif adaptatif par modèle
+```
+
+### Installation et lancement
+
+```bash
+# Cloner le repository
+git clone <repository-url>
+cd projet-9-sentiment-analysis
+
+# Installer les dépendances
+pip install -r app/requirements.txt
+
+# Lancer l'application
+cd app
+streamlit run main.py
+```
+
+L'application sera accessible sur `http://localhost:8501`. Le dashboard détecte automatiquement les modèles disponibles dans `app/models/` et charge leurs métriques pour comparaison.
+
+---
+
 ## 📦 Technologies
 
 - **Langages** : Python  

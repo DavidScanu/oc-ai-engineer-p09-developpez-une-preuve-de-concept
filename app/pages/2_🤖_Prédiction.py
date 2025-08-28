@@ -8,6 +8,7 @@ import plotly.graph_objects as go
 from datetime import datetime
 import os
 import sys
+import re
 
 # Ajouter le chemin parent pour les imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -33,24 +34,34 @@ def load_model():
         st.error(f"Erreur lors du chargement du modèle : {e}")
         return None, None, False
 
-def preprocess_text(text):
-    """Prétraite le texte comme pendant l'entraînement"""
-    if not isinstance(text, str):
+def preprocess_text(tweet):
+    """
+    Prétraite un tweet pour l'entraînement BERT en conservant la structure naturelle
+    du langage mais en normalisant certains éléments spécifiques aux réseaux sociaux.
+    """
+    # Vérifier si le tweet est une chaîne de caractères
+    if not isinstance(tweet, str):
         return ""
-    
-    text = str(text).strip()
-    
+
+    tweet = str(tweet)
+    tweet = ' '.join(tweet.split())
+
     # Remplacer les URLs par un token spécial
-    import re
-    text = re.sub(r'https?://\S+|www\.\S+', '[URL]', text)
-    
-    # Remplacer les mentions par un token spécial  
-    text = re.sub(r'@\w+', '[USER]', text)
-    
-    # Normaliser les espaces
-    text = re.sub(r'\s+', ' ', text)
-    
-    return text.strip()
+    tweet = re.sub(r'https?://\S+|www\.\S+', '[URL]', tweet)
+
+    # Remplacer les mentions par un token spécial
+    tweet = re.sub(r'@\w+', '[USER]', tweet)
+
+    # Extraire le contenu du hashtag (supprimer le symbole #)
+    tweet = re.sub(r'#(\w+)', r'\1', tweet)  # #Python -> Python
+
+    # Normaliser les espaces multiples
+    tweet = re.sub(r'\s+', ' ', tweet)
+
+    # Nettoyer les espaces en début et fin
+    tweet = tweet.strip()
+
+    return tweet
 
 def predict_sentiment(text, model, tokenizer):
     """Prédit le sentiment d'un texte"""
@@ -154,14 +165,21 @@ def main():
                 help="Saisissez le texte dont vous voulez analyser le sentiment"
             )
         else:
+            # examples = {
+            #     "Très positif": "I absolutely love this product! It exceeded all my expectations and made my day so much better!",
+            #     "Positif": "This is pretty good, I'm satisfied with the quality.",
+            #     "Neutre": "The weather is okay today, nothing special.",
+            #     "Négatif": "I don't really like this, it could be better.",
+            #     "Très négatif": "This is absolutely terrible! Worst experience ever, completely disappointed and frustrated!"
+            # }
             examples = {
-                "Très positif": "I absolutely love this product! It exceeded all my expectations and made my day so much better!",
-                "Positif": "This is pretty good, I'm satisfied with the quality.",
-                "Neutre": "The weather is okay today, nothing special.",
-                "Négatif": "I don't really like this, it could be better.",
-                "Très négatif": "This is absolutely terrible! Worst experience ever, completely disappointed and frustrated!"
+            "Très positif": "OMG just got tickets for @taylorswift13 concert!! Best day EVER! 💕 #Swifties #DreamsComeTrue #SoHappy",
+            "Positif": "Thanks @starbucks for the great service today! The new latte is pretty good 👍 #coffee #goodmorning",
+            "Neutre": "Waiting for the bus on 5th street. Traffic looks normal today. @citybus any delays? #commute",
+            "Négatif": "Ugh @netflix why did you cancel my favorite show?? Really disappointed with this decision 😒 #SaveOurShow",
+            "Très négatif": "@airlinecompany WORST FLIGHT EVER! 3 hours delayed, lost luggage, rude staff! Never flying with you again!! #TravelNightmare #Angry"
             }
-            
+
             selected_example = st.selectbox(
                 "Choisissez un exemple :",
                 list(examples.keys())
@@ -265,7 +283,7 @@ def main():
         st.dataframe(
             df_history.style.format({
                 'confidence': '{:.1%}'
-            }).applymap(
+            }).map(
                 lambda x: 'color: green' if x == 'Positif' else 'color: red' if x == 'Négatif' else '',
                 subset=['sentiment']
             ),

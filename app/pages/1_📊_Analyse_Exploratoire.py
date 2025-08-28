@@ -326,12 +326,6 @@ def main():
             for i, (word, freq) in enumerate(word_freq[:10], 1):
                 st.write(f"{i}. **{word}** ({freq:,})")
         
-        st.markdown("""
-        **Observations :**
-        - Vocabulaire émotionnel dominant
-        - Mots d'opinion fréquents
-        - Expressions typiques des réseaux sociaux
-        """)
     
     st.markdown("---")
     
