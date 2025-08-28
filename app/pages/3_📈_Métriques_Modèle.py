@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import sys
 import os
+import json
 from utils.model_manager import ModelManager, format_improvement, get_performance_status, DISTILBERT_BASELINE
 
 # Ajouter le chemin parent pour les imports
@@ -163,6 +164,58 @@ def create_model_comparison_chart(selected_model, baseline):
     
     return fig, df
 
+def create_training_history_chart(history: dict):
+    """
+    Affiche la loss par epoch et la validation accuracy si dispo
+    """
+    logs = history.get("log_history", [])
+    if not logs:
+        return go.Figure()
+
+    df = pd.DataFrame(logs)
+
+    # --- Training Loss par epoch ---
+    train_df = df.dropna(subset=["loss", "epoch"])
+    epoch_loss = train_df.groupby(train_df["epoch"].round(0).astype(int))["loss"].mean().reset_index()
+
+    # --- Validation Accuracy par epoch ---
+    val_df = df.dropna(subset=["eval_accuracy", "epoch"])
+    val_acc = val_df.groupby(val_df["epoch"].round(0).astype(int))["eval_accuracy"].mean().reset_index()
+
+    fig = go.Figure()
+
+    # Courbe Training Loss
+    fig.add_trace(go.Scatter(
+        x=epoch_loss["epoch"],
+        y=epoch_loss["loss"],
+        mode="lines+markers",
+        name="Training Loss",
+        line=dict(color="royalblue")
+    ))
+
+    # Courbe Validation Accuracy
+    if not val_acc.empty:
+        fig.add_trace(go.Scatter(
+            x=val_acc["epoch"],
+            y=val_acc["eval_accuracy"],
+            mode="lines+markers",
+            name="Validation Accuracy",
+            yaxis="y2",  # deuxième axe
+            line=dict(color="darkorange")
+        ))
+
+    # Layout avec 2 axes Y
+    fig.update_layout(
+        title="Historique d'entraînement",
+        xaxis_title="Epoch",
+        yaxis=dict(title="Training Loss"),
+        yaxis2=dict(title="Validation Accuracy", overlaying="y", side="right"),
+        template="plotly_white",
+        legend=dict(x=0.02, y=0.98)
+    )
+
+    return fig
+
 
 def main():
     st.title("📈 Métriques et Comparaison des Modèles")
@@ -299,6 +352,19 @@ def main():
             st.metric("Équilibre pos/neg", f"{balance_ratio:.0f}%/{100-balance_ratio:.0f}%")
         else:
             st.metric("Équilibre pos/neg", "N/A")
+
+
+    # Historique d'entraînement
+    st.markdown("---")
+    st.subheader("📉 Historique d'Entraînement")
+
+    history = selected_model.get("training_history")
+
+    if history:
+        fig_history = create_training_history_chart(history)
+        st.plotly_chart(fig_history, use_container_width=True)
+    else:
+        st.info("⚠️ Aucun historique d'entraînement disponible pour ce modèle.")
 
 
 

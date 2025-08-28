@@ -97,6 +97,19 @@ class ModelManager:
                         'best_metric': training_metrics.get('best_metric', 0)
                     })
             
+            # 2b. Historique d'entraînement (epochs, courbes)
+            training_history_path = os.path.join(metrics_dir, "training_history.json")
+            if os.path.exists(training_history_path):
+                with open(training_history_path, 'r') as f:
+                    try:
+                        training_history = json.load(f)
+                        info['training_history'] = training_history
+                    except Exception as e:
+                        print(f"Erreur lors du chargement de training_history.json: {e}")
+                        info['training_history'] = None
+            else:
+                info['training_history'] = None
+
             # 3. Informations du modèle
             model_info_path = os.path.join(model_dir, "model_info.json")
             if os.path.exists(model_info_path):
