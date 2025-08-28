@@ -1,12 +1,15 @@
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
+import plotly.figure_factory as ff
 import pandas as pd
 import numpy as np
 import sys
 import os
 import json
 from utils.model_manager import ModelManager, format_improvement, get_performance_status, DISTILBERT_BASELINE
+from sklearn.metrics import confusion_matrix
+
 
 # Ajouter le chemin parent pour les imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
@@ -30,7 +33,7 @@ def create_comparison_chart(comparison_df):
     
     fig = go.Figure()
     
-    colors = ['#1f77b4', '#ff7f0e', '#2ca02c', '#d62728', '#9467bd']
+    colors = ['#ff7f0e', '#2ca02c', "#ee6b6b", '#9467bd']
     
     for i, (_, row) in enumerate(comparison_df.iterrows()):
         model_name = row['Modèle']
@@ -38,7 +41,7 @@ def create_comparison_chart(comparison_df):
         
         # Couleur spéciale pour le baseline
         if row['Type'] == 'baseline':
-            color = '#ff7f0e'
+            color = '#1f77b4'
             model_name += ' (Baseline)'
         
         fig.add_trace(go.Scatter(
@@ -164,54 +167,94 @@ def create_model_comparison_chart(selected_model, baseline):
     
     return fig, df
 
-def create_training_history_chart(history: dict):
+def create_training_history_chart(df: pd.DataFrame):
     """
-    Affiche la loss par epoch et la validation accuracy si dispo
+    Affiche les courbes par epoch :
+    - Training Loss
+    - Validation Accuracy
+    - Validation ROC AUC
     """
-    logs = history.get("log_history", [])
-    if not logs:
+    if df is None or df.empty:
         return go.Figure()
 
-    df = pd.DataFrame(logs)
-
-    # --- Training Loss par epoch ---
-    train_df = df.dropna(subset=["loss", "epoch"])
-    epoch_loss = train_df.groupby(train_df["epoch"].round(0).astype(int))["loss"].mean().reset_index()
-
-    # --- Validation Accuracy par epoch ---
-    val_df = df.dropna(subset=["eval_accuracy", "epoch"])
-    val_acc = val_df.groupby(val_df["epoch"].round(0).astype(int))["eval_accuracy"].mean().reset_index()
+    # --- Agréger par epoch (moyenne par epoch) ---
+    # Crée une nouvelle colonne 'epoch_int' pour éviter le conflit
+    df["epoch_int"] = df["epoch"].round(0).astype(int)
+    df_epoch = df.groupby("epoch_int").mean().reset_index()
 
     fig = go.Figure()
 
-    # Courbe Training Loss
-    fig.add_trace(go.Scatter(
-        x=epoch_loss["epoch"],
-        y=epoch_loss["loss"],
-        mode="lines+markers",
-        name="Training Loss",
-        line=dict(color="royalblue")
-    ))
-
-    # Courbe Validation Accuracy
-    if not val_acc.empty:
+    # Training Loss
+    if "loss" in df_epoch.columns:
         fig.add_trace(go.Scatter(
-            x=val_acc["epoch"],
-            y=val_acc["eval_accuracy"],
-            mode="lines+markers",
-            name="Validation Accuracy",
-            yaxis="y2",  # deuxième axe
-            line=dict(color="darkorange")
+            x=df_epoch["epoch_int"],
+            y=df_epoch["loss"],
+            mode="lines",
+            name="Training Loss",
+            line=dict(color="royalblue", width=2)
         ))
 
-    # Layout avec 2 axes Y
+    # Validation Accuracy
+    if "eval_accuracy" in df_epoch.columns and df_epoch["eval_accuracy"].notna().any():
+        fig.add_trace(go.Scatter(
+            x=df_epoch["epoch_int"],
+            y=df_epoch["eval_accuracy"],
+            mode="lines",
+            name="Validation Accuracy",
+            line=dict(color="darkorange", width=2),
+            yaxis="y2"
+        ))
+
+    # Validation ROC AUC
+    if "eval_roc_auc" in df_epoch.columns and df_epoch["eval_roc_auc"].notna().any():
+        fig.add_trace(go.Scatter(
+            x=df_epoch["epoch_int"],
+            y=df_epoch["eval_roc_auc"],
+            mode="lines",
+            name="Validation ROC AUC",
+            line=dict(color="green", width=2),
+            yaxis="y2"
+        ))
+
+    # Layout dual-axis
     fig.update_layout(
-        title="Historique d'entraînement",
+        title="Historique d'entraînement (par Epoch)",
         xaxis_title="Epoch",
         yaxis=dict(title="Training Loss"),
-        yaxis2=dict(title="Validation Accuracy", overlaying="y", side="right"),
+        yaxis2=dict(title="Validation Metrics", overlaying="y", side="right"),
         template="plotly_white",
         legend=dict(x=0.02, y=0.98)
+    )
+
+    return fig
+
+def create_confusion_matrix_chart(df: pd.DataFrame):
+    """
+    Crée une matrice de confusion à partir du DataFrame df
+    """
+    if df.empty:
+        return go.Figure()
+
+    y_true = df["true_labels"]
+    y_pred = df["predictions"]
+
+    labels = sorted(list(set(y_true) | set(y_pred)))
+
+    cm = confusion_matrix(y_true, y_pred, labels=labels)
+
+    fig = ff.create_annotated_heatmap(
+        z=cm,
+        x=[str(l) for l in labels],
+        y=[str(l) for l in labels],
+        colorscale="Blues",
+        showscale=True,
+        reversescale=False
+    )
+
+    fig.update_layout(
+        title="Matrice de Confusion",
+        xaxis_title="Prédiction",
+        yaxis_title="Valeur Réelle"
     )
 
     return fig
@@ -358,14 +401,23 @@ def main():
     st.markdown("---")
     st.subheader("📉 Historique d'Entraînement")
 
-    history = selected_model.get("training_history")
 
-    if history:
-        fig_history = create_training_history_chart(history)
-        st.plotly_chart(fig_history, use_container_width=True)
-    else:
-        st.info("⚠️ Aucun historique d'entraînement disponible pour ce modèle.")
+    # Deuxième ligne - Dataset et entraînement
+    col1, col2 = st.columns(2)
+    
+    with col1:
 
+        if selected_model:
+            df_history = manager.load_training_history(selected_model["model_path"])
+            fig = create_training_history_chart(df_history)
+            st.plotly_chart(fig, use_container_width=True)
+
+    with col2:
+
+        # Dans votre fonction main(), après avoir choisi le modèle :
+        df_test_preds = manager.load_test_predictions(selected_model)
+        fig_cm = create_confusion_matrix_chart(df_test_preds)
+        st.plotly_chart(fig_cm, use_container_width=True)
 
 
     # Graphiques de comparaison

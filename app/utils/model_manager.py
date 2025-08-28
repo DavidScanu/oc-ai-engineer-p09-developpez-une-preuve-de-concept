@@ -46,7 +46,6 @@ class ModelManager:
         
         return models
 
-
     def _load_dataset_config(self, model_path: str) -> Dict:
         """Charge la configuration du dataset"""
         try:
@@ -245,6 +244,32 @@ class ModelManager:
                 return model
         
         return None
+
+    def load_training_history(self, model_path: str) -> Optional[pd.DataFrame]:
+        """Charge l'historique d'entraînement (CSV)"""
+        try:
+            history_path = os.path.join(model_path, "visualizations", "training_history_data.csv")
+            if os.path.exists(history_path):
+                df = pd.read_csv(history_path)
+                return df
+        except Exception as e:
+            print(f"Erreur lors du chargement de training_history_data.csv: {e}")
+        return None
+
+    def load_test_predictions(self, model_info: dict) -> pd.DataFrame:
+        """
+        Charge les prédictions de test pour un modèle.
+        Retourne un DataFrame avec colonnes: true_labels, predictions
+        """
+        try:
+            model_path = model_info.get("model_path")
+            csv_path = os.path.join(model_path, "visualizations", "test_predictions.csv")
+            if os.path.exists(csv_path):
+                df = pd.read_csv(csv_path)
+                return df
+        except Exception as e:
+            print(f"Erreur lors du chargement de test_predictions.csv: {e}")
+        return pd.DataFrame(columns=["true_labels", "predictions"])
 
 def format_improvement(improvement_data: Dict) -> str:
     """Formate l'affichage d'une amélioration"""
