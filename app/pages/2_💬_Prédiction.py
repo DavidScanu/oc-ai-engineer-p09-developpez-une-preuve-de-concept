@@ -9,9 +9,17 @@ from datetime import datetime
 import os
 import sys
 import re
+import demoji
 
 # Ajouter le chemin parent pour les imports
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+# Add model manager import
+try:
+    from utils.model_manager import ModelManager
+    MODEL_MANAGER_AVAILABLE = True
+except ImportError:
+    MODEL_MANAGER_AVAILABLE = False
 
 st.set_page_config(
     page_title="Prédiction de Sentiment",
@@ -20,10 +28,8 @@ st.set_page_config(
 )
 
 @st.cache_resource
-def load_model():
-    """Charge le modèle ModernBERT et le tokenizer"""
-    model_path = "models/modernbert-sentiment-20250816_1156/model"
-    
+def load_model_by_path(model_path):
+    """Charge un modèle spécifique par son chemin"""
     try:
         tokenizer = AutoTokenizer.from_pretrained(model_path)
         model = AutoModelForSequenceClassification.from_pretrained(model_path)
@@ -33,6 +39,15 @@ def load_model():
     except Exception as e:
         st.error(f"Erreur lors du chargement du modèle : {e}")
         return None, None, False
+
+@st.cache_data
+def get_available_models():
+    """Récupère les modèles disponibles"""
+    if MODEL_MANAGER_AVAILABLE:
+        manager = ModelManager()
+        return manager.discover_models()
+    return []
+
 
 def preprocess_text(tweet):
     """
@@ -54,6 +69,9 @@ def preprocess_text(tweet):
 
     # Extraire le contenu du hashtag (supprimer le symbole #)
     tweet = re.sub(r'#(\w+)', r'\1', tweet)  # #Python -> Python
+
+    # Convertir les émojis en descriptions textuelles
+    tweet = demoji.replace_with_desc(tweet, sep=" ")
 
     # Normaliser les espaces multiples
     tweet = re.sub(r'\s+', ' ', tweet)
@@ -129,19 +147,79 @@ def create_confidence_chart(probabilities):
     
     return fig
 
+
+
 def main():
-    st.title("🤖 Prédiction de Sentiment en Temps Réel")
+    st.title("💬 Prédiction de Sentiment en Temps Réel")
     st.markdown("---")
+    
+    # Sélection du modèle
+    selected_model = None
+    model_info = None
+    
+    if MODEL_MANAGER_AVAILABLE:
+        available_models = get_available_models()
+        
+        if available_models:
+            st.subheader("🔧 Sélection du Modèle")
+            
+            col1, col2 = st.columns([3, 1])
+            
+            with col1:
+                model_options = {f"{model['model_id']} ({model['training_date']})": model for model in available_models}
+                selected_model_key = st.selectbox(
+                    "Choisissez le modèle à utiliser :",
+                    options=list(model_options.keys()),
+                    index=0,
+                    help="Sélectionnez le modèle ModernBERT pour les prédictions"
+                )
+                selected_model = model_options[selected_model_key]
+                model_info = selected_model
+            
+            with col2:
+                # Statut du modèle
+                manager = ModelManager()
+                best_model = manager.get_best_model('roc_auc')
+                is_best = best_model and best_model['model_id'] == selected_model['model_id']
+                st.metric("Statut", "🏆 Meilleur" if is_best else "📊 Standard")
+            
+            # Métriques du modèle sélectionné
+            with st.expander("📊 Performances du Modèle Sélectionné"):
+                col1, col2, col3, col4 = st.columns(4)
+                
+                with col1:
+                    accuracy = selected_model.get('accuracy', 0)
+                    st.metric("Accuracy", f"{accuracy:.1%}")
+                with col2:
+                    f1 = selected_model.get('f1', 0)
+                    st.metric("F1-Score", f"{f1:.1%}")
+                with col3:
+                    precision = selected_model.get('precision', 0)
+                    st.metric("Précision", f"{precision:.1%}")
+                with col4:
+                    roc_auc = selected_model.get('roc_auc', 0)
+                    st.metric("ROC AUC", f"{roc_auc:.1%}")
+            
+            model_path = os.path.join(selected_model['model_path'], "model")
+        else:
+            st.error("❌ Aucun modèle ModernBERT trouvé")
+            st.stop()
+    else:
+        st.warning("⚠️ Gestionnaire de modèles non disponible, utilisation du modèle par défaut")
+        model_path = "models/modernbert-sentiment-20250816_1156/model"
     
     # Chargement du modèle
     with st.spinner("Chargement du modèle ModernBERT..."):
-        model, tokenizer, success = load_model()
+        model, tokenizer, success = load_model_by_path(model_path)
     
     if not success:
         st.error("❌ Impossible de charger le modèle. Vérifiez que les fichiers sont présents.")
         st.stop()
     
-    st.success("✅ Modèle ModernBERT chargé avec succès !")
+    if selected_model:
+        st.success(f"✅ Modèle **{selected_model['model_id']}** chargé avec succès !")
+    else:
+        st.success("✅ Modèle ModernBERT chargé avec succès !")
     
     # Interface de prédiction
     st.subheader("💬 Interface de Prédiction")
@@ -160,24 +238,17 @@ def main():
         if input_method == "Saisie libre":
             user_text = st.text_area(
                 "Entrez votre texte :",
-                placeholder="Ex: I love this movie! It's absolutely amazing...",
+                placeholder="Ex: 😍 I love this movie! #absolutely #amazing",
                 height=120,
                 help="Saisissez le texte dont vous voulez analyser le sentiment"
             )
         else:
-            # examples = {
-            #     "Très positif": "I absolutely love this product! It exceeded all my expectations and made my day so much better!",
-            #     "Positif": "This is pretty good, I'm satisfied with the quality.",
-            #     "Neutre": "The weather is okay today, nothing special.",
-            #     "Négatif": "I don't really like this, it could be better.",
-            #     "Très négatif": "This is absolutely terrible! Worst experience ever, completely disappointed and frustrated!"
-            # }
             examples = {
-            "Très positif": "OMG just got tickets for @taylorswift13 concert!! Best day EVER! 💕 #Swifties #DreamsComeTrue #SoHappy",
-            "Positif": "Thanks @starbucks for the great service today! The new latte is pretty good 👍 #coffee #goodmorning",
-            "Neutre": "Waiting for the bus on 5th street. Traffic looks normal today. @citybus any delays? #commute",
-            "Négatif": "Ugh @netflix why did you cancel my favorite show?? Really disappointed with this decision 😒 #SaveOurShow",
-            "Très négatif": "@airlinecompany WORST FLIGHT EVER! 3 hours delayed, lost luggage, rude staff! Never flying with you again!! #TravelNightmare #Angry"
+                "Très positif": "OMG just got tickets for @taylorswift13 concert!! Best day EVER! 💕 #Swifties #DreamsComeTrue #SoHappy",
+                "Positif": "Thanks @starbucks for the great service today! The new latte is pretty good 👍 #coffee #goodmorning",
+                "Neutre": "Waiting for the bus on 5th street ⌚. Traffic looks normal today. @citybus any delays? #commute",
+                "Négatif": "Ugh @netflix why did you cancel my favorite show?? Really disappointed with this decision 😒 #SaveOurShow",
+                "Très négatif": "@airlinecompany WORST FLIGHT EVER! ❌ 3 hours delayed, lost luggage, rude staff! Never flying with you again!! #TravelNightmare #Angry"
             }
 
             selected_example = st.selectbox(
@@ -185,7 +256,13 @@ def main():
                 list(examples.keys())
             )
             user_text = examples[selected_example]
-            st.text_area("Texte sélectionné :", value=user_text, height=120, disabled=True)
+            
+            st.markdown("**Tweet d'exemple :**")
+            st.markdown(f"""
+            <div style="background-color: #1da1f2; color: white; padding: 12px; border-radius: 8px; margin: 10px 0;">
+            {user_text}
+            </div>
+            """, unsafe_allow_html=True)
     
     with col2:
         st.markdown("""
@@ -199,6 +276,7 @@ def main():
         **Conseils :**
         - Textes en anglais pour de meilleurs résultats
         - 10 à 280 caractères recommandés
+        - Les hashtags (#) sont acceptés
         - Les emojis sont acceptés
         """)
     
@@ -240,12 +318,20 @@ def main():
         with st.expander("🔍 Détails de l'Analyse"):
             col1, col2 = st.columns(2)
             
-            with col1:
-                st.markdown("**Texte original :**")
-                st.code(user_text)
-                
-                st.markdown("**Texte prétraité :**")
-                st.code(result['processed_text'])
+        with col1:
+            st.markdown("**Texte original :**")
+            st.markdown(f"""
+            <div style="background-color: #1da1f2; color: white; padding: 10px; border-radius: 5px;">
+            {user_text}
+            </div>
+            """, unsafe_allow_html=True)
+            
+            st.markdown("**Texte prétraité :**")
+            st.markdown(f"""
+            <div style="background-color: #f0f2f6; padding: 10px; border-radius: 5px; border-left: 3px solid #ccc;">
+            {result['processed_text']}
+            </div>
+            """, unsafe_allow_html=True)
             
             with col2:
                 st.markdown("**Probabilités détaillées :**")
@@ -299,24 +385,57 @@ def main():
     st.markdown("---")
     
     with st.expander("🔧 Informations Techniques"):
-        st.markdown("""
-        **Architecture du Modèle :**
-        - **Base** : ModernBERT-base (Answer.AI)
-        - **Paramètres** : 149.6M total, 1.5K entraînables (fine-tuning)
-        - **Tâche** : Classification binaire de sentiment
-        - **Tokenizer** : ModernBERT (50K tokens)
-        
-        **Prétraitement :**
-        - Remplacement des URLs par `[URL]`
-        - Remplacement des mentions par `[USER]`
-        - Normalisation des espaces
-        - Troncature à 512 tokens maximum
-        
-        **Performance :**
-        - Accuracy : 85.2%
-        - F1-Score : 84.4%
-        - ROC AUC : 91.7%
-        """)
+        if model_info:
+            # Informations réelles du modèle
+            col1, col2 = st.columns(2)
+            
+            with col1:
+                st.markdown("**Architecture du Modèle :**")
+                st.write(f"- **Base** : {model_info.get('architecture', 'ModernBERT-base')}")
+                st.write(f"- **Paramètres totaux** : {model_info.get('total_params', 0):,}")
+                st.write(f"- **Paramètres entraînables** : {model_info.get('trainable_params', 0):,}")
+                st.write(f"- **Vocabulaire** : {model_info.get('vocab_size', 0):,} tokens")
+                st.write(f"- **Tâche** : Classification binaire de sentiment")
+                
+                st.markdown("**Entraînement :**")
+                st.write(f"- **Dataset** : {model_info.get('total_samples', 0):,} échantillons")
+                st.write(f"- **Époques** : {model_info.get('epochs_completed', 'N/A')}")
+                st.write(f"- **Temps** : {model_info.get('training_time_minutes', 0):.1f} minutes")
+            
+            with col2:
+                st.markdown("**Performances :**")
+                st.write(f"- **Accuracy** : {model_info.get('accuracy', 0):.1%}")
+                st.write(f"- **F1-Score** : {model_info.get('f1', 0):.1%}")
+                st.write(f"- **Précision** : {model_info.get('precision', 0):.1%}")
+                st.write(f"- **Rappel** : {model_info.get('recall', 0):.1%}")
+                st.write(f"- **ROC AUC** : {model_info.get('roc_auc', 0):.1%}")
+                st.write(f"- **Loss finale** : {model_info.get('loss', 0):.4f}")
+                
+                st.markdown("**Prétraitement :**")
+                st.write("- Remplacement des URLs par `[URL]`")
+                st.write("- Remplacement des mentions par `[USER]`")
+                st.write("- Suppression des hashtags (#)")
+                st.write("- Normalisation des espaces")
+                st.write("- Troncature à 512 tokens maximum")
+        else:
+            # Informations par défaut
+            st.markdown("""
+            **Architecture du Modèle :**
+            - **Base** : ModernBERT-base (Answer.AI)
+            - **Paramètres** : 149.6M total, 1.5K entraînables (fine-tuning)
+            - **Tâche** : Classification binaire de sentiment
+            - **Tokenizer** : ModernBERT (50K tokens)
+            
+            **Prétraitement :**
+            - Remplacement des URLs par `[URL]`
+            - Remplacement des mentions par `[USER]`
+            - Suppression des hashtags (#)
+            - Remplacement des émojis par leur description textuelle
+            - Normalisation des espaces
+            - Troncature à 512 tokens maximum
+            """)
+
+
 
 if __name__ == "__main__":
     main()
