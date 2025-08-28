@@ -474,15 +474,15 @@ def main():
     # Tableau de comparaison détaillé
     st.markdown("---")
     st.subheader("📋 Tableau de Comparaison Complet")
-    
+
     # Formater le DataFrame pour l'affichage
     display_df = comparison_df.copy()
-    
-    # Arrondir les valeurs numériques
-    numeric_columns = ['Accuracy', 'F1-Score', 'Précision', 'Rappel', 'ROC AUC']
+
+    # Convertir toutes les colonnes numériques, remplacer les non-numériques par NaN
+    numeric_columns = ['Accuracy', 'F1-Score', 'Précision', 'Rappel', 'ROC AUC', 'Temps (min)']
     for col in numeric_columns:
-        display_df[col] = display_df[col].round(3)
-    
+        display_df[col] = pd.to_numeric(display_df[col], errors='coerce').round(3)
+
     # Styliser le tableau
     def highlight_best(s):
         """Surligne les meilleures valeurs"""
@@ -490,16 +490,22 @@ def main():
             max_val = s.max()
             return ['background-color: #e8f5e8' if v == max_val else '' for v in s]
         return [''] * len(s)
-    
+
     def highlight_baseline(row):
         """Surligne la ligne baseline"""
         if row['Type'] == 'baseline':
             return ['background-color: #fff3cd'] * len(row)
         return [''] * len(row)
-    
-    styled_df = display_df.style.apply(highlight_best, axis=0).apply(highlight_baseline, axis=1)
-    
+
+    # styled_df = display_df.style.apply(highlight_best, axis=0).apply(highlight_baseline, axis=1)
+    # st.dataframe(styled_df, use_container_width=True)
+
+    styled_df = display_df.style.format({col: "{:.3f}" for col in numeric_columns}) \
+                                .apply(highlight_best, axis=0) \
+                                .apply(highlight_baseline, axis=1)
     st.dataframe(styled_df, use_container_width=True)
+
+
     
     # Analyse détaillée
     with st.expander("🔍 Analyse Détaillée"):
