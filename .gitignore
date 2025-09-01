@@ -1,5 +1,5 @@
 # Exclude large model files
-app/models/*/model/model.safetensors
+# app/models/*/model/model.safetensors
 
 desktop.ini
 
