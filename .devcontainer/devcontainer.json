@@ -18,9 +18,13 @@
     }
   },
   // "updateContentCommand": "[ -f packages.txt ] && sudo apt update && sudo apt upgrade -y && sudo xargs apt install -y <packages.txt; [ -f requirements.txt ] && pip3 install --user -r requirements.txt; pip3 install --user streamlit; echo '✅ Packages installed and Requirements met'",
-  "updateContentCommand": "sudo apt update && sudo apt install -y git-lfs && git lfs install && git lfs pull && [ -f app/requirements.txt ] && pip3 install --user -r app/requirements.txt; pip3 install --user streamlit; echo '✅ Packages and LFS files ready'",
+  // "postAttachCommand": {
+  //  "server": "streamlit run app/main.py --server.enableCORS false --server.enableXsrfProtection false"
+  // },
+  "updateContentCommand": "[ -f app/requirements.txt ] && pip3 install --user -r app/requirements.txt; pip3 install --user streamlit; echo '✅ Packages installed'",
+  "postCreateCommand": "sudo apt update && sudo apt install -y git-lfs && git lfs install",
   "postAttachCommand": {
-    "server": "streamlit run app/main.py --server.enableCORS false --server.enableXsrfProtection false"
+    "server": "git lfs pull && streamlit run app/main.py --server.enableCORS false --server.enableXsrfProtection false"
   },
   "portsAttributes": {
     "8501": {
