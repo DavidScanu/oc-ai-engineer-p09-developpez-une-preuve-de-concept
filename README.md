@@ -106,6 +106,8 @@ Dans le cadre de notre projet, nous procédons à un **fine-tuning** sur le jeu 
 2. Wolf, T. et al. (2020). [Transformers: State-of-the-Art Natural Language Processing](https://arxiv.org/abs/1910.03771)  
 3. Answer.AI. (2024). [ModernBERT: Efficient Transformer for Long-Sequence NLP](https://huggingface.co/answerdotai/ModernBERT-base)
 
+---
+
 ## 📊 Dashboard Streamlit
 
 ### Fonctionnalités principales
@@ -134,6 +136,12 @@ Le dashboard interactif permet de valider la preuve de concept à travers quatre
     ├── Visualisations (confusion matrix, ROC, historique)
     └── Résumé exécutif adaptatif par modèle
 ```
+
+#### Page principale
+![Page principale du dashboard](images/p09-dashboard-streamlit-mockup-01-main.png)
+
+#### Page de prédiction
+![Page de prédiction de sentiment](images/p09-dashboard-streamlit-mockup-03-prediction.png)
 
 ### Installation et lancement (local)
 
