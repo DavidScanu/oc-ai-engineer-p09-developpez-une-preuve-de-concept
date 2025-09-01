@@ -218,19 +218,67 @@ def main():
     with col5:
         st.metric("Mots moyens", f"{stats['avg_words']:.1f}")
     
-    # Informations sur le dataset complet
-    with st.expander("ℹ️ À propos du Dataset Sentiment140"):
+    # Informations techniques sur le dataset    
+    col1, col2 = st.columns(2)
+    
+    with col1:
         st.markdown("""
-        **Sentiment140** est un dataset de tweets annotés développé par l'Université de Stanford :
+        **Caractéristiques du dataset :**
         
-        - 📊 **1.6 million de tweets** au total (nous utilisons un échantillon de 50K)
-        - 🌍 **Tweets en anglais** collectés en 2009
-        - ⚖️ **Dataset équilibré** : 50% positif, 50% négatif
-        - 🔄 **Prétraitement appliqué** : nettoyage, normalisation des URLs et mentions
-        
-        Ce dataset est largement utilisé pour l'entraînement de modèles de classification de sentiment.
+        - 📊 **Volume** : 1.6 million de tweets originaux
+        - 🏷️ **Annotation** : Automatique basée sur emoticons
+        - 🌍 **Langue** : Anglais exclusivement
+        - 📅 **Période** : Tweets collectés en 2009
+        - ⚖️ **Équilibre** : 50% positif, 50% négatif
+        - 🔄 **Prétraitement** : URLs et mentions normalisées
         """)
     
+    with col2:
+        st.markdown("""
+        **Méthodologie d'annotation :**
+        
+        - 😊 **Positif** : Tweets contenant des emoticons positives
+        - 😞 **Négatif** : Tweets contenant des emoticons négatives
+        - 🧹 **Nettoyage** : Suppression des emoticons après annotation
+        - ✅ **Validation** : Méthode éprouvée académiquement
+        - 📖 **Référence** : Stanford NLP Group (Go et al., 2009)
+        - 🎯 **Usage** : Standard pour l'évaluation en classification de sentiment
+        """)
+
+
+
+    # Aperçu rapide du dataset : exemples de tweets
+    dataset_preview = {'loaded': False}
+    try:
+        sample_pos = df[df['target'] == 1]['text'].sample(3, random_state=1).tolist()
+        sample_neg = df[df['target'] == 0]['text'].sample(3, random_state=1).tolist()
+        dataset_preview = {
+            'loaded': True,
+            'sample_tweets': {
+                'positive': sample_pos,
+                'negative': sample_neg
+            }
+        }
+    except Exception as e:
+        st.warning(f"Impossible d'afficher un aperçu des tweets : {e}")
+
+    if dataset_preview['loaded'] and 'sample_tweets' in dataset_preview:
+        st.markdown("---")
+        st.subheader("👀 Aperçu des Données Réelles")
+        
+        col1, col2 = st.columns(2)
+        
+        with col1:
+            st.markdown("**Exemples de tweets positifs :**")
+            for i, tweet in enumerate(dataset_preview['sample_tweets']['positive'], 1):
+                st.write(f"{i}. *\"{tweet[:100]}{'...' if len(tweet) > 100 else ''}\"*")
+        
+        with col2:
+            st.markdown("**Exemples de tweets négatifs :**")
+            for i, tweet in enumerate(dataset_preview['sample_tweets']['negative'], 1):
+                st.write(f"{i}. *\"{tweet[:100]}{'...' if len(tweet) > 100 else ''}\"*")
+
+                
     st.markdown("---")
     
     # Distribution des sentiments
