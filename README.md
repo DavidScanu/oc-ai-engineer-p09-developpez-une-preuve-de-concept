@@ -116,10 +116,6 @@ Dans le cadre de notre projet, nous procédons à un **fine-tuning** sur le jeu 
 
 ---
 
-Voici la section à ajouter à votre README.md :
-
----
-
 ## 📊 Dashboard Streamlit
 
 ### Fonctionnalités principales
@@ -149,22 +145,78 @@ Le dashboard interactif permet de valider la preuve de concept à travers quatre
     └── Résumé exécutif adaptatif par modèle
 ```
 
-### Installation et lancement
+### Installation et lancement (local)
+
+Voici les commandes pour une installation avec environnement virtuel dans le dossier `app` :
 
 ```bash
 # Cloner le repository
 git clone <repository-url>
-cd projet-9-sentiment-analysis
+cd oc-ai-engineer-p09-developpez-une-preuve-de-concept
 
-# Installer les dépendances
-pip install -r app/requirements.txt
+# Installer et configurer Git LFS
+sudo apt update && sudo apt install -y git-lfs  # Sur Ubuntu/Debian
+# brew install git-lfs                          # Sur macOS
+
+# Configurer Git LFS pour ce repository
+git lfs install
+
+# Télécharger les modèles ML volumineux
+git lfs pull
+
+# Vérifier que les modèles sont bien téléchargés
+ls -lh app/models/modernbert-sentiment-20250816_1156/model/model.safetensors
+# Devrait afficher ~598MB
+
+# Aller dans le dossier de l'application
+cd app
+
+# Créer l'environnement virtuel
+python3 -m venv venv
+
+# Activer l'environnement virtuel
+source venv/bin/activate  # Sur Linux/macOS
+# venv\Scripts\activate   # Sur Windows
+
+# Installer les dépendances Python
+pip install -r requirements.txt
 
 # Lancer l'application
-cd app
-streamlit run main.py
+streamlit run main.py --server.enableCORS false --server.enableXsrfProtection false
+```
+
+#### 🔍 Vérifications utiles :
+
+```bash
+# Vérifier Git LFS
+git lfs version
+
+# Voir tous les fichiers trackés par LFS
+git lfs ls-files
+
+# Vérifier l'état des fichiers LFS
+git lfs status
+```
+
+Note importante : Si `git lfs pull` échoue ou que les modèles restent des fichiers pointer (~130 bytes), vous devrez peut-être :
+- Vous authentifier sur GitHub avec les bonnes permissions
+- Utiliser ``git lfs fetch --all` puis `git lfs checkout`
+- Ou télécharger manuellement les modèles depuis l'interface GitHub
+
+#### **🔄 Pour les utilisations suivantes :**
+
+```bash
+cd oc-ai-engineer-p09-developpez-une-preuve-de-concept/app
+
+# Activer l'environnement virtuel
+source venv/bin/activate
+
+# Lancer l'application
+streamlit run main.py --server.enableCORS false --server.enableXsrfProtection false
 ```
 
 L'application sera accessible sur `http://localhost:8501`. Le dashboard détecte automatiquement les modèles disponibles dans `app/models/` et charge leurs métriques pour comparaison.
+
 
 ---
 
