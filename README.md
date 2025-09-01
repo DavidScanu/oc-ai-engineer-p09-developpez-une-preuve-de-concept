@@ -145,7 +145,7 @@ Le dashboard interactif permet de valider la preuve de concept à travers quatre
 
 ### Installation et lancement (local)
 
-Voici les commandes pour une installation avec environnement virtuel dans le dossier `app` :
+Voici les commandes pour une installation avec environnement virtuel :
 
 ```bash
 # Cloner le repository
@@ -163,11 +163,8 @@ git lfs install
 git lfs pull
 
 # Vérifier que les modèles sont bien téléchargés
-ls -lh app/models/modernbert-sentiment-20250816_1156/model/model.safetensors
+ls -lh models/modernbert-sentiment-20250816_1156/model/model.safetensors
 # Devrait afficher ~598MB
-
-# Aller dans le dossier de l'application
-cd app
 
 # Créer l'environnement virtuel
 python3 -m venv venv
@@ -204,7 +201,7 @@ Note importante : Si `git lfs pull` échoue ou que les modèles restent des fich
 #### **🔄 Pour les utilisations suivantes :**
 
 ```bash
-cd oc-ai-engineer-p09-developpez-une-preuve-de-concept/app
+cd oc-ai-engineer-p09-developpez-une-preuve-de-concept
 
 # Activer l'environnement virtuel
 source venv/bin/activate
@@ -213,7 +210,7 @@ source venv/bin/activate
 streamlit run main.py --server.enableCORS false --server.enableXsrfProtection false
 ```
 
-L'application sera accessible sur `http://localhost:8501`. Le dashboard détecte automatiquement les modèles disponibles dans `app/models/` et charge leurs métriques pour comparaison.
+L'application sera accessible sur `http://localhost:8501`. Le dashboard détecte automatiquement les modèles disponibles dans `models/` et charge leurs métriques pour comparaison.
 
 ### GitHub Codespaces + Streamlit + Git LFS
 
@@ -230,16 +227,15 @@ Ce projet est configuré pour fonctionner automatiquement avec **GitHub Codespac
 
 1. **Ouvrir dans Codespaces** - L'environnement se configure automatiquement
 2. **Lancer l'application** : L'application se lance automatiquement mais vous pouvez la lancer manuellement avec la commande `bash start.sh` (à la racine du projet)
-3. **Accéder à l'app** via le port 8501 (ouverture automatique)
+3. **Accéder au dashboard** via le port 8501 (ouverture automatique)
 
 #### 📁 Structure du projet
 
 ```
 ├── .devcontainer/          # Configuration Codespaces
-├── app/                    # Application Streamlit
-│   ├── main.py            # Point d'entrée principal  
-│   ├── models/            # Modèles ML (Git LFS)
-│   └── utils/             # Utilitaires et helpers
+├── main.py            # Point d'entrée principal  
+├── models/            # Modèles ML (Git LFS)
+├── utils/             # Utilitaires et helpers
 ├── setup.sh               # Script d'installation
 └── start.sh               # Script de lancement
 ```
