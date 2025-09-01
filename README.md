@@ -36,8 +36,6 @@ Dans le **Projet 7**, notre modèle **DistilBERT** fine-tuné sur Sentiment140 a
 
 Ces résultats constituent notre **baseline** pour évaluer les approches du Projet 9.
 
----
-
 ## 🧠 Approches
 
 ### 🔹 Classification zero-shot
@@ -57,7 +55,6 @@ L’utilisation d’un **LLM** comme **Claude AI** pour la classification zero-s
 
 Nous avons testé deux modèles Anthropic :
 - `claude-3-haiku-20240307` (version rapide et économique)
-- `claude-3-5-haiku-20241022` (avec batch processing)
 
 ### 🔹 Transfer learning et ModernBERT
 
@@ -80,12 +77,9 @@ Dans le cadre de notre projet, nous procédons à un **fine-tuning** sur le jeu 
 | **cardiffnlp/twitter-roberta-base-sentiment-latest** | Transformer   | Zero-shot          | Spécialisé Twitter, bon équilibre précision/rapidité                         | Moins performant hors domaine Twitter                        |
 | **siebert/sentiment-roberta-large-english**     | Transformer   | Zero-shot          | Grande capacité, robuste sur texte général                                   | Temps d’inférence plus élevé                                 |
 | **Claude 3 Haiku 20240307**                     | LLM           | Zero-shot (API)    | Faible coût, rapidité, pas de prétraitement complexe                         | Dépendance API, pas optimisé pour tweets courts               |
-| **Claude 3.5 Haiku 20241022**                   | LLM           | Zero-shot (API)    | Meilleure compréhension contextuelle, batch processing                       | Coût plus élevé, temps de réponse plus long                   |
 | **ModernBERT (fine-tuning)**                    | Transformer   | Transfer learning  | Pré-entraînement massif (2T tokens), optimisé mémoire & vitesse, séquence longue | Nécessite entraînement, tuning hyperparamètres                |
 
 > **Note** : les performances réelles seront mesurées sur le même jeu de test Sentiment140 afin d’assurer une comparaison équitable.
-
----
 
 ## 🧪 Démarche expérimentale
 
@@ -106,15 +100,11 @@ Dans le cadre de notre projet, nous procédons à un **fine-tuning** sur le jeu 
    - Tableau comparatif des performances
    - Analyse d’erreurs et cas limites
 
----
-
 ## 📚 Références
 
 1. Go, A., Bhayani, R., & Huang, L. (2009). [Twitter Sentiment Classification using Distant Supervision](http://help.sentiment140.com/for-students)  
 2. Wolf, T. et al. (2020). [Transformers: State-of-the-Art Natural Language Processing](https://arxiv.org/abs/1910.03771)  
 3. Answer.AI. (2024). [ModernBERT: Efficient Transformer for Long-Sequence NLP](https://huggingface.co/answerdotai/ModernBERT-base)
-
----
 
 ## 📊 Dashboard Streamlit
 
@@ -217,8 +207,45 @@ streamlit run main.py --server.enableCORS false --server.enableXsrfProtection fa
 
 L'application sera accessible sur `http://localhost:8501`. Le dashboard détecte automatiquement les modèles disponibles dans `app/models/` et charge leurs métriques pour comparaison.
 
+### GitHub Codespaces + Streamlit + Git LFS
 
----
+Ce projet est configuré pour fonctionner automatiquement avec **GitHub Codespaces** avec tous les outils nécessaires pour le développement d'applications IA.
+
+#### ⚙️ Configuration automatique
+
+- **🐍 Python 3.11** avec environnement de développement optimisé
+- **📦 Git LFS** pour la gestion des modèles de ML volumineux (598MB+)
+- **🔥 Streamlit** pour l'interface web interactive
+- **🤖 Transformers & PyTorch** pour les modèles d'IA
+
+#### 🎯 Démarrage rapide
+
+1. **Ouvrir dans Codespaces** - L'environnement se configure automatiquement
+2. **Lancer l'application** : L'application se lance automatiquement mais vous pouvez la lancer manuellement avec la commande `bash start.sh` (à la racine du projet)
+3. **Accéder à l'app** via le port 8501 (ouverture automatique)
+
+#### 📁 Structure du projet
+
+```
+├── .devcontainer/          # Configuration Codespaces
+├── app/                    # Application Streamlit
+│   ├── main.py            # Point d'entrée principal  
+│   ├── models/            # Modèles ML (Git LFS)
+│   └── utils/             # Utilitaires et helpers
+├── setup.sh               # Script d'installation
+└── start.sh               # Script de lancement
+```
+
+#### 🔧 Fonctionnalités
+
+- ✅ **Installation automatique** des dépendances au démarrage
+- ✅ **Gestion intelligente** des fichiers volumineux via Git LFS
+- ✅ **Vérification automatique** - évite les téléchargements inutiles
+- ✅ **Configuration VS Code** optimisée pour Python/IA
+- ✅ **Déploiement** prêt pour Streamlit Cloud
+
+> **Note :** Le premier démarrage peut prendre quelques minutes pour télécharger les modèles ML
+
 
 ## 📦 Technologies
 
@@ -227,8 +254,6 @@ L'application sera accessible sur `http://localhost:8501`. Le dashboard détecte
 - **MLOps** : MLFlow, GitHub Actions  
 - **Backend/API** : Streamlit  
 - **LLM API** : Claude AI  
-
----
 
 ## A propos 
 
