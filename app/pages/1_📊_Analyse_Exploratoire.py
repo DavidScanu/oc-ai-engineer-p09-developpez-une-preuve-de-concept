@@ -288,7 +288,7 @@ def main():
     
     with col1:
         fig_sentiment = create_sentiment_distribution(df)
-        st.plotly_chart(fig_sentiment, use_container_width=True)
+        st.plotly_chart(fig_sentiment, width='stretch')
     
     with col2:
         st.markdown("""
@@ -313,7 +313,7 @@ def main():
     
     with col1:
         fig_length = create_text_length_analysis(df)
-        st.plotly_chart(fig_length, use_container_width=True)
+        st.plotly_chart(fig_length, width='stretch')
         
         # Statistiques détaillées
         st.markdown("**Statistiques de longueur :**")
@@ -325,7 +325,7 @@ def main():
     
     with col2:
         fig_words = create_word_count_analysis(df)
-        st.plotly_chart(fig_words, use_container_width=True)
+        st.plotly_chart(fig_words, width='stretch')
         
         # Statistiques de mots
         st.markdown("**Statistiques de mots :**")
@@ -340,7 +340,7 @@ def main():
     # Analyse du sentiment par longueur
     st.subheader("📏 Sentiment en Fonction de la Longueur")
     fig_sentiment_length = create_sentiment_by_length(df)
-    st.plotly_chart(fig_sentiment_length, use_container_width=True)
+    st.plotly_chart(fig_sentiment_length, width='stretch')
     
     with st.expander("💡 Interprétation"):
         st.markdown("""
@@ -364,7 +364,7 @@ def main():
     with col1:
         if word_freq:
             fig_words_freq = create_word_frequency_plot(word_freq)
-            st.plotly_chart(fig_words_freq, use_container_width=True)
+            st.plotly_chart(fig_words_freq, width='stretch')
         else:
             st.warning("Impossible de calculer les fréquences de mots")
     
@@ -385,7 +385,7 @@ def main():
     with tab1:
         with st.spinner("Génération du WordCloud général..."):
             wordcloud_all = create_wordcloud_from_data(df)
-            st.pyplot(wordcloud_all, use_container_width=True)
+            st.pyplot(wordcloud_all, width='stretch')
         
         with st.expander("♿ Description textuelle"):
             st.markdown("""
@@ -396,7 +396,7 @@ def main():
     with tab2:
         with st.spinner("Génération du WordCloud positif..."):
             wordcloud_pos = create_wordcloud_from_data(df, sentiment=1)
-            st.pyplot(wordcloud_pos, use_container_width=True)
+            st.pyplot(wordcloud_pos, width='stretch')
         
         with st.expander("♿ Description textuelle"):
             st.markdown("""
@@ -407,7 +407,7 @@ def main():
     with tab3:
         with st.spinner("Génération du WordCloud négatif..."):
             wordcloud_neg = create_wordcloud_from_data(df, sentiment=0)
-            st.pyplot(wordcloud_neg, use_container_width=True)
+            st.pyplot(wordcloud_neg, width='stretch')
         
         with st.expander("♿ Description textuelle"):
             st.markdown("""

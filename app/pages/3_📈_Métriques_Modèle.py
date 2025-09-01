@@ -410,14 +410,14 @@ def main():
         if selected_model:
             df_history = manager.load_training_history(selected_model["model_path"])
             fig = create_training_history_chart(df_history)
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width='stretch')
 
     with col2:
 
         # Dans votre fonction main(), après avoir choisi le modèle :
         df_test_preds = manager.load_test_predictions(selected_model)
         fig_cm = create_confusion_matrix_chart(df_test_preds)
-        st.plotly_chart(fig_cm, use_container_width=True)
+        st.plotly_chart(fig_cm, width='stretch')
 
 
     # Graphiques de comparaison
@@ -428,7 +428,7 @@ def main():
     
     with col1:
         fig_comparison, df_comparison = create_model_comparison_chart(selected_model, manager.baseline)
-        st.plotly_chart(fig_comparison, use_container_width=True)
+        st.plotly_chart(fig_comparison, width='stretch')
     
     with col2:
         st.markdown("**Améliorations vs DistilBERT :**")
@@ -455,7 +455,7 @@ def main():
     with col1:
         st.subheader("📈 Détail des Améliorations")
         fig_improvements = create_improvement_chart(comparison)
-        st.plotly_chart(fig_improvements, use_container_width=True)
+        st.plotly_chart(fig_improvements, width='stretch')
         
         # Résumé des améliorations
         summary = comparison['summary']
@@ -468,7 +468,7 @@ def main():
         # Inclure tous les modèles dans la comparaison
         comparison_df = manager.get_comparison_dataframe()
         fig_comparison_all = create_comparison_chart(comparison_df)
-        st.plotly_chart(fig_comparison_all, use_container_width=True)
+        st.plotly_chart(fig_comparison_all, width='stretch')
 
 
     # Tableau de comparaison détaillé
@@ -498,12 +498,12 @@ def main():
         return [''] * len(row)
 
     # styled_df = display_df.style.apply(highlight_best, axis=0).apply(highlight_baseline, axis=1)
-    # st.dataframe(styled_df, use_container_width=True)
+    # st.dataframe(styled_df, width='stretch')
 
     styled_df = display_df.style.format({col: "{:.3f}" for col in numeric_columns}) \
                                 .apply(highlight_best, axis=0) \
                                 .apply(highlight_baseline, axis=1)
-    st.dataframe(styled_df, use_container_width=True)
+    st.dataframe(styled_df, width='stretch')
 
 
     

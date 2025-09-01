@@ -312,7 +312,7 @@ def main():
         with col3:
             # Graphique des probabilités
             fig = create_confidence_chart(result['probabilities'])
-            st.plotly_chart(fig, use_container_width=True)
+            st.plotly_chart(fig, width='stretch')
         
         # Détails de l'analyse
         with st.expander("🔍 Détails de l'Analyse"):
@@ -373,7 +373,7 @@ def main():
                 lambda x: 'color: green' if x == 'Positif' else 'color: red' if x == 'Négatif' else '',
                 subset=['sentiment']
             ),
-            use_container_width=True
+            width='stretch'
         )
         
         # Bouton pour vider l'historique
