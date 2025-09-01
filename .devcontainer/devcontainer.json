@@ -26,8 +26,10 @@
     }
   },
 
+  // S'exécute une seule fois après la création initiale du container
   "postCreateCommand": "bash setup.sh",
 
+  // S'exécute à chaque fois qu'on se connecte au container
   "postAttachCommand": {
     "server": "bash start.sh"
   },

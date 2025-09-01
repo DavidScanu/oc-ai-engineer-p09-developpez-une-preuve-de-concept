@@ -1,9 +1,5 @@
 import streamlit as st
-import pandas as pd
-import numpy as np
-from utils.data_analysis import get_basic_stats, load_sentiment140_data
-from utils.visualizations import create_accessible_colors
-import os
+from utils.data_analysis import load_sentiment140_data
 
 # Configuration de la page
 st.set_page_config(
@@ -74,7 +70,7 @@ def get_dataset_preview():
 
 def main():
     """Page d'accueil du dashboard"""
-    
+
     # En-tête avec titre et description
     st.title("🎯 Dashboard d'Analyse de Sentiment")
     st.markdown("""
