@@ -12,8 +12,7 @@ git lfs install
 
 # Install Python dependencies
 echo "🐍 Installing Python packages..."
-pip3 install --user -r app/requirements.txt >/dev/null 2>&1
-pip3 install --user streamlit >/dev/null 2>&1
+pip3 install --user -r requirements.txt >/dev/null 2>&1
 
 # Make scripts executable
 echo "🔑 Setting permissions..."

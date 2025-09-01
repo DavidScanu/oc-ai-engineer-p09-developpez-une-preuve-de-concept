@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Configuration
-MODEL_PATH="app/models/modernbert-sentiment-20250816_1156/model/model.safetensors"
+MODEL_PATH="models/modernbert-sentiment-20250816_1156/model/model.safetensors"
 MIN_SIZE=1000000  # 1MB minimum pour considérer que ce n'est pas un pointer
 
 echo "🔍 Checking AI model..."
@@ -35,11 +35,7 @@ if ! check_model_size; then
 fi
 
 # Démarrer Streamlit depuis le bon répertoire
-echo "🚀 Starting Streamlit from app/ directory..."
-cd app || {
-    echo "❌ Cannot access app/ directory"
-    exit 1
-}
+echo "🚀 Starting Streamlit..."
 
 # Lancer Streamlit avec gestion d'erreur
 if command -v streamlit >/dev/null 2>&1; then
