@@ -1,45 +1,51 @@
 #!/bin/bash
 
 # Configuration
-MODEL_PATH="models/modernbert-sentiment-20250816_1156/model/model.safetensors"
-MIN_SIZE=1000000  # 1MB minimum pour considérer que ce n'est pas un pointer
+MODEL_PATTERN="models/*/model/model.safetensors"
+MIN_SIZE=1000000
 
-echo "🔍 Checking AI model..."
+echo "🔍 Checking AI models..."
 
-# Fonction pour vérifier la taille du fichier
-check_model_size() {
-    if [ -f "$MODEL_PATH" ]; then
-        SIZE=$(stat -c%s "$MODEL_PATH" 2>/dev/null || echo 0)
-        if [ "$SIZE" -gt "$MIN_SIZE" ]; then
-            echo "✅ Model ready ($(du -h "$MODEL_PATH" | cut -f1))"
-            return 0
-        else
-            echo "⚠️  Model is pointer file ($(du -h "$MODEL_PATH" | cut -f1))"
-            return 1
+# Vérifier les modèles
+check_models() {
+    local found_valid=false
+    
+    for model_path in $MODEL_PATTERN; do
+        if [ -f "$model_path" ]; then
+            SIZE=$(stat -c%s "$model_path" 2>/dev/null || echo 0)
+            if [ "$SIZE" -gt "$MIN_SIZE" ]; then
+                echo "✅ Model ready: $model_path ($(du -h "$model_path" | cut -f1))"
+                found_valid=true
+            else
+                echo "⚠️  Pointer file: $model_path ($(du -h "$model_path" | cut -f1))"
+            fi
         fi
+    done
+    
+    if [ "$found_valid" = true ]; then
+        return 0
     else
-        echo "❌ Model file not found"
+        echo "❌ No valid models found"
         return 1
     fi
 }
 
-# Vérifier et télécharger si nécessaire
-if ! check_model_size; then
+# Télécharger si nécessaire
+if ! check_models; then
     echo "📥 Downloading LFS files..."
     if git lfs pull; then
-        echo "✅ LFS files downloaded successfully"
-        check_model_size
+        echo "✅ LFS files downloaded, re-checking..."
+        check_models
     else
-        echo "⚠️  LFS download failed, continuing with fallback..."
+        echo "⚠️  LFS download failed, continuing anyway..."
     fi
 fi
 
-# Démarrer Streamlit depuis le bon répertoire
+# Démarrer Streamlit
 echo "🚀 Starting Streamlit..."
+echo "🌐 Available at http://localhost:8501"
 
-# Lancer Streamlit avec gestion d'erreur
 if command -v streamlit >/dev/null 2>&1; then
-    echo "🌐 Streamlit will be available at http://localhost:8501"
     streamlit run main.py \
         --server.enableCORS false \
         --server.enableXsrfProtection false \
@@ -47,7 +53,7 @@ if command -v streamlit >/dev/null 2>&1; then
         --server.address 0.0.0.0 \
         --server.port 8501
 else
-    echo "❌ Streamlit not found. Installing..."
+    echo "❌ Installing Streamlit..."
     pip3 install --user streamlit
     streamlit run main.py --server.enableCORS false --server.enableXsrfProtection false
 fi

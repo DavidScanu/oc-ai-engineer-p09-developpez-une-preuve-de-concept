@@ -1,23 +1,33 @@
 #!/bin/bash
-echo "🚀 Setting up development environment..."
+set -e  # Arrêter si erreur critique
 
-# Install Git LFS
-echo "📦 Installing Git LFS..."
-sudo apt update >/dev/null 2>&1
-sudo apt install -y git-lfs >/dev/null 2>&1
+echo "🚀 Setting up development environment..."
 
 # Configure Git LFS
 echo "🔧 Configuring Git LFS..."
-git lfs install
+if command -v git-lfs >/dev/null 2>&1; then
+    echo "✅ Git LFS already installed via devcontainer feature"
+    git lfs install >/dev/null 2>&1
+else
+    echo "⚠️  Git LFS not found, installing as fallback..."
+    sudo apt update >/dev/null 2>&1
+    sudo apt install -y git-lfs >/dev/null 2>&1
+    git lfs install >/dev/null 2>&1
+fi
 
 # Install Python dependencies
 echo "🐍 Installing Python packages..."
-pip3 install --user -r requirements.txt >/dev/null 2>&1
+if [ -f "requirements.txt" ]; then
+    pip3 install --user -r requirements.txt >/dev/null 2>&1 && \
+        echo "✅ Python dependencies installed" || \
+        echo "⚠️  Some dependencies may have failed to install"
+else
+    echo "⚠️  requirements.txt not found"
+fi
 
 # Make scripts executable
 echo "🔑 Setting permissions..."
-[ -f start.sh ] && chmod +x start.sh
-chmod +x setup.sh
+chmod +x *.sh 2>/dev/null && echo "✅ Scripts made executable" || true
 
 echo "✅ Setup complete!"
 echo "🎯 Run './start.sh' to launch the application"
