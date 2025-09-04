@@ -212,6 +212,39 @@ streamlit run main.py --server.enableCORS false --server.enableXsrfProtection fa
 
 L'application sera accessible sur `http://localhost:8501`. Le dashboard détecte automatiquement les modèles disponibles dans `models/` et charge leurs métriques pour comparaison.
 
+Voici la section Docker pour votre README.md :
+
+### 🐳 Déploiement Docker (Local)
+
+Le dashboard peut être exécuté localement dans un conteneur Docker pour un environnement isolé et reproductible.
+
+#### Prérequis
+
+- [Docker](https://docs.docker.com/get-docker/) installé et démarré
+- [Git LFS](https://git-lfs.github.io/) configuré pour les modèles ML
+
+#### Construction de l'image
+
+```bash
+# Construire l'image Docker
+docker build -t sentiment-dashboard .
+```
+
+**Note :** La construction peut prendre 5-10 minutes lors du premier build (téléchargement des dépendances Python et modèles ML).
+
+#### Lancement du conteneur
+
+```bash
+# Démarrer l'application sur le port 8080
+docker run -p 8080:8080 --env PORT=8080 sentiment-dashboard
+```
+
+#### Accès à l'application
+
+Une fois le conteneur démarré, l'application est accessible à :
+- **URL locale :** `http://localhost:8080`
+- **Arrêt :** `Ctrl + C` dans le terminal
+
 ### Déploiement sur Google Cloud Run
 
 Le dashboard peut être déployé sur **Google Cloud Run** pour un accès public sécurisé. Voici les étapes pour un déploiement simple et économique.
