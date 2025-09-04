@@ -1,0 +1,11 @@
+gcloud run deploy sentiment-dashboard \
+    --source . \
+    --platform managed \
+    --region europe-west1 \
+    --allow-unauthenticated \
+    --memory 4Gi \
+    --cpu 2 \
+    --timeout 900 \
+    --max-instances 3 \
+    --min-instances 0 \
+    --concurrency 50

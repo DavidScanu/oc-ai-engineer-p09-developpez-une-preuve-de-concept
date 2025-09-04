@@ -1,3 +1,14 @@
+[server]
+enableStaticServing = true
+enableCORS = false
+enableXsrfProtection = false
+headless = true
+port = 8080
+address = "0.0.0.0"
+
+[browser]
+gatherUsageStats = false
+
 [theme]
 primaryColor = "#2ca02c"
 backgroundColor = "#ffffff"
@@ -5,9 +16,5 @@ secondaryBackgroundColor = "#f8f9fa"
 textColor = "#262730"
 font = "sans serif"
 
-[server]
-enableCORS = false
-enableXsrfProtection = false
-
-[browser]
-gatherUsageStats = false
+[global]
+developmentMode = false

@@ -212,6 +212,75 @@ streamlit run main.py --server.enableCORS false --server.enableXsrfProtection fa
 
 L'application sera accessible sur `http://localhost:8501`. Le dashboard détecte automatiquement les modèles disponibles dans `models/` et charge leurs métriques pour comparaison.
 
+### Déploiement sur Google Cloud Run
+
+Le dashboard peut être déployé sur **Google Cloud Run** pour un accès public sécurisé. Voici les étapes pour un déploiement simple et économique.
+
+#### Prérequis
+
+- Compte Google Cloud avec facturation activée
+- [Google Cloud SDK](https://cloud.google.com/sdk/docs/install) installé et configuré
+- Docker installé localement
+
+#### Configuration initiale
+
+```bash
+# Authentification et configuration du projet
+gcloud auth login
+gcloud config set project VOTRE_PROJECT_ID
+gcloud config set compute/region europe-west1
+
+# Activation des services Cloud Run
+gcloud services enable run.googleapis.com
+gcloud services enable cloudbuild.googleapis.com
+```
+
+#### Déploiement automatique
+
+```bash
+# Déploiement direct depuis le code source
+gcloud run deploy sentiment-dashboard \
+    --source . \
+    --platform managed \
+    --region europe-west1 \
+    --allow-unauthenticated \
+    --memory 4Gi \
+    --cpu 2 \
+    --timeout 900 \
+    --max-instances 3 \
+    --min-instances 0 \
+    --concurrency 50
+```
+
+**Paramètres expliqués :**
+- `--min-instances 0` : L'application s'arrête quand inutilisée (coût ~2-3€/mois)
+- `--memory 4Gi` : Suffisant pour les modèles ModernBERT (~1.1GB)
+- `--concurrency 50` : Permet le chargement parallèle des assets Streamlit
+
+#### Gestion post-déploiement
+
+```bash
+# Voir les logs en temps réel
+gcloud logs tail "resource.type=cloud_run_revision AND resource.labels.service_name=sentiment-dashboard"
+
+# Mettre à jour les ressources
+gcloud run services update sentiment-dashboard \
+    --memory 4Gi \
+    --region europe-west1
+
+# Supprimer le service
+gcloud run services delete sentiment-dashboard \
+    --region europe-west1
+```
+
+#### Points d'attention
+
+- **Démarrage à froid** : Première requête après inactivité prend 30-60s (chargement des modèles)
+- **Taille des modèles** : Les 2 modèles ModernBERT (598MB chacun) nécessitent au minimum 2GB de RAM
+- **Git LFS** : Les modèles sont gérés via Git LFS et téléchargés automatiquement lors du build
+
+**URL d'accès :** Une fois déployé, l'application sera accessible via l'URL fournie par Cloud Run (format `https://sentiment-dashboard-[hash].[region].run.app`).
+
 ### GitHub Codespaces + Streamlit + Git LFS
 
 Ce projet est configuré pour fonctionner automatiquement avec **GitHub Codespaces** avec tous les outils nécessaires pour le développement d'applications IA.
