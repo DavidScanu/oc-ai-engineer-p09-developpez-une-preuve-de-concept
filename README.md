@@ -1,6 +1,38 @@
 # 📝 Projet 9 – Développez une preuve de concept : Amélioration d’un modèle d’analyse de sentiment de tweets
 
+[![Python](https://img.shields.io/badge/Python-3.11-blue?logo=python&logoColor=white)](https://python.org)
+[![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-orange?logo=pytorch&logoColor=white)](https://pytorch.org)
+[![Transformers](https://img.shields.io/badge/🤗%20Transformers-4.45+-yellow)](https://huggingface.co/transformers)
+[![Streamlit](https://img.shields.io/badge/Streamlit-1.28+-red?logo=streamlit&logoColor=white)](https://streamlit.io)
+[![Google Cloud](https://img.shields.io/badge/Google%20Cloud-Run-4285F4?logo=googlecloud&logoColor=white)](https://cloud.google.com/run)
+[![Docker](https://img.shields.io/badge/Docker-Containerized-2496ED?logo=docker&logoColor=white)](https://docker.com)
+[![MLflow](https://img.shields.io/badge/MLflow-Tracking-0194E2?logo=mlflow&logoColor=white)](https://mlflow.org)
+
 > 🎓 OpenClassrooms • Parcours [AI Engineer](https://openclassrooms.com/fr/paths/795-ai-engineer) | 👋 *Étudiant* : [David Scanu](https://www.linkedin.com/in/davidscanu14/)
+
+## 📦 Livrables et démonstration
+
+### 📄 Documentation complète
+- **Plan prévisionnel :** [Document Google](https://docs.google.com/document/d/1IPwaLy4KSIxu0i-zbR5k6LQf-CnRmNRc4s5MpfxbJHQ/edit?usp=sharing)
+- **Note méthodologique :** [Document Google](https://docs.google.com/document/d/1SaygKpqF-7lTzzS9pW6DfWkEn8kBwfJyxsS9wCMadQg/edit?usp=sharing) 
+- **Présentation :** [Google Slides](https://docs.google.com/presentation/d/1YBFMDJ8XrjN_7DDn7i4cx9X_3clQKgnQ3FphxzPr_XQ/edit?usp=sharing)
+
+### 💻 Code source et notebooks
+- **Repository GitHub :** [oc-ai-engineer-p09-developpez-une-preuve-de-concept](https://github.com/DavidScanu/oc-ai-engineer-p09-developpez-une-preuve-de-concept)
+- **Notebook Colab - Évaluation RoBERTa :** [Zero-shot RoBERTa Models](https://colab.research.google.com/drive/1sbGRh1Gn3KQwf7zRszgLgL7dUnJzDHXb?usp=sharing)
+- **Notebook Colab - Évaluation Claude AI :** [Zero-shot Claude AI](https://colab.research.google.com/drive/1NkzBp0rGczt9JJat-S-PHhdzW3CQjpP0?usp=sharing)
+- **Notebook Colab - Fine-tuning ModernBERT :** [ModernBERT Transfer Learning](https://colab.research.google.com/drive/1eNB8sRaU7txm2RdYGJeq9ZQQWe71Q7_I?usp=sharing)
+- **Comparaison des modèles :** [Partie 4 : Comparaison des approches (zero-shot, LLM, Transfer Learning)](https://colab.research.google.com/drive/1eNB8sRaU7txm2RdYGJeq9ZQQWe71Q7_I?usp=sharing#scrollTo=xv-g5ekSwCVi)
+
+### 🎯 Résultats clés
+- **ModernBERT fine-tuné :** ROC AUC = 0,839 | F1 = 0,772
+- **Claude 3 Haiku (zero-shot) :** ROC AUC = 0,852 | F1 = 0,807
+- **Dashboard opérationnel :** Déployé sur Google Cloud Run avec interface temps réel
+
+### 🚀 Dashboard de démonstration
+**URL de production :** [https://sentiment-dashboard-511050029575.europe-west1.run.app/](https://sentiment-dashboard-511050029575.europe-west1.run.app/)
+
+---
 
 ## 📌 Introduction
 
